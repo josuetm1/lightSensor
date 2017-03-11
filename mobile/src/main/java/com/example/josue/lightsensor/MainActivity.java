@@ -548,9 +548,23 @@ public void sendBtMsg(String msg2send){
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        Intent intent;
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        switch (id){
+            case R.id.action_add:
+                intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_map:
+                intent = new Intent(this, MapsActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_list:
+                break;
+            default:
+                break;
+        }
+        if (id == R.id.action_map) {
             return true;
         }
 
