@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,11 +17,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.HashMap;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private HashMap<String, Marker> markersHashMap = new HashMap<>();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,8 +87,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(19.461011, -70.682417);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Josue"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng latLng = new LatLng(19.461011, -70.682417);
+        add("12D", latLng);
+        latLng = new LatLng(19.461011, -71.682417);
+        add("12D42342342", latLng);
+        add("3", latLng);
+        update("3", new LatLng(19.461011, -72.682417));
+        remove("12D42342342");
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        final MapsActivity act = this;
+        GoogleMap.OnMarkerClickListener OnMarkerClickListener =new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(final Marker marker) {
+                Toast.makeText(act,
+                        "Esto mostrará más info del dispositivo.\n"+
+                        "Línea2\n" +
+                                "Línea3",
+                        Toast.LENGTH_SHORT).show();
+                // Return false to indicate that we have not consumed the event and that we wish
+                // for the default behavior to occur (which is for the camera to move such that the
+                // marker is centered and for the marker's info window to open, if it has one).
+                return false;
+            }
+        };
+        mMap.setOnMarkerClickListener(OnMarkerClickListener);
     }
+
+    private void remove(String macAddress){
+        Marker marker = markersHashMap.get(macAddress);
+        if (marker==null) return;
+        markersHashMap.remove(marker);
+        marker.remove();
+    }
+
+    private void update(String macAddress, LatLng latLng){
+        Marker marker = markersHashMap.get(macAddress);
+        if (marker==null) return;
+        marker.setPosition(latLng);
+    }
+
+    private void add(String macAddress, LatLng latLng){
+        if (markersHashMap.containsKey(macAddress)){
+
+            return;
+        }
+        String title = macAddress;
+        String snippet = "Line1 Line2";
+        Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(title).snippet(snippet));
+        markersHashMap.put(macAddress, marker);
+    }
+
+
 }
