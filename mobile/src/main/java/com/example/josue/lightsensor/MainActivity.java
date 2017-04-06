@@ -24,9 +24,16 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -36,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     ////ejemplo 3 bluetooth////
-    //TextView myLabel;
-    //EditText myTextbox;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice;
@@ -46,14 +51,11 @@ public class MainActivity extends AppCompatActivity {
     Thread workerThread;
     byte[] readBuffer;
     int readBufferPosition;
-    int counter;
     volatile boolean stopWorker;
 
 
     TextView txtBtInput;
-    TextView txtHelloWorld;
     Button button;
-    Integer count = 0;
     EditText txtInput;
 
     /////for bluetooth////
@@ -64,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
     private InputStream inStream;
 
     /////prueba 2 bluetooth/////
-    //BluetoothSocket mmSocket;
-   // BluetoothDevice mmDevice = null;
     final byte delimiter = 33;
    // int readBufferPosition = 0;
 
@@ -142,8 +142,6 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 findBT();
                 try {
                     openBT();
@@ -153,17 +151,11 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
+
         });
 
        txtBtInput = (TextView) findViewById(R.id.textViewBluetoothInput);
 
-        //BA = BluetoothAdapter.getDefaultAdapter();
-       /// lv = (ListView)findViewById(R.id.listView);
-        //setMmDevice();
-
-        //txtHelloWorld = (TextView) findViewById(R.id.txtHelloWorld);
-
-       // txtHelloWorld.setText("More than Hello World");
 
         txtInput = (EditText) findViewById(R.id.editTextInput);
 
@@ -213,6 +205,33 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        });
+
+        Log.d("helooooooooooooo","in");
+        Connection c = AzureDataBase.getInstace().CONN();
+        Log.d("helooooooooooooo","out");
+
+        String query = "select * from REFGISTROMALETA";
+        Statement stmt = null;
+        ResultSet rs;
+        try {
+            stmt = c.createStatement();
+            rs = stmt.executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        if(c!=null){
+            try {
+                c.close();
+                Log.d("helooooooooooooo","this dick");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.d("helooooooooooooo","close");
+      //  txtBtInput.setText(rs.getNString());
+
 
     }
 

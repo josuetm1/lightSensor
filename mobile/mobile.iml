@@ -177,6 +177,7 @@
     <orderEntry type="library" exported="" name="play-services-wearable-10.2.0" level="project" />
     <orderEntry type="library" exported="" name="palette-v7-24.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-cast-framework-10.2.0" level="project" />
+    <orderEntry type="library" exported="" name="jtds-1.2.7" level="project" />
     <orderEntry type="library" exported="" name="play-services-wallet-10.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-maps-10.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-location-10.2.0" level="project" />
@@ -190,6 +191,7 @@
     <orderEntry type="library" exported="" name="play-services-basement-10.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-fitness-10.2.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-database-10.2.0" level="project" />
+    <orderEntry type="library" exported="" name="sqljdbc4-2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-games-10.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-10.2.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-auth-10.2.0" level="project" />
