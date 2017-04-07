@@ -30,52 +30,6 @@ public class AzureDataBase {
     }
 ///////Singleton end///////////////
 
-//    protected String connectionString =
-//            "jdbc:sqlserver://travelsecurity.database.windows.net:1433;"
-//                    + "database=TravelSecurity;"
-//                    + "user=ProyectoAdm@travelsecurity;"
-//                    + "password=Proyecto0087;"
-//                    + "encrypt=true;"
-//                    + "trustServerCertificate=false;"
-//                    + "hostNameInCertificate=*.database.windows.net;"
-//                    + "loginTimeout=30;";
-
-
-//    public ResultSet execute(String sql) throws SQLException {
-//
-//
-//        Connection connection = DriverManager.getConnection(connectionString);
-//        Statement statement = connection.createStatement();
-//        connection.createStatement();
-//        ResultSet resultSet = statement.executeQuery(sql);
-//        connection.commit();
-//        connection.close();
-//        return resultSet;
-//
-//    }
-//
-//    public void testConnect() {
-//
-//        // Declare the JDBC objects.
-//        Connection connection = null;
-//
-//        try {
-//
-//            connection = DriverManager.getConnection(connectionString);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (connection != null) try {
-//                connection.close();
-//            } catch (Exception e) {
-//            }
-//        }
-//        Log.d("helooooooooooooo", "out");
-//
-//
-//    }
-
     String ip = "travelsecurity.database.windows.net:1433";
     String classs = "net.sourceforge.jtds.jdbc.Driver";
     String db = "TravelSecurity";
@@ -104,5 +58,28 @@ public class AzureDataBase {
             Log.e("ERRO", e.getMessage());
         }
         return conn;
+    }
+
+    public String executeASDF(String query){
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+        String ret = null;
+
+        if(c != null) {
+            try {
+                stmt = c.createStatement();
+                rs = stmt.executeQuery(query);
+                rs.next();
+                ret = rs.getString(2);
+
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return ret;
     }
 }

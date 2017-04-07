@@ -169,68 +169,11 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-//                count ++;
-//                txtHelloWorld.setText(count.toString());
-//
-//                switch (count){
-//                    case 1: bluetoothOff(); break;
-//                    case 2: bluetoothOn(); break;
-//                    case 3:bluetoothVisible(); break;
-//                    case 4: bluetoothList(); break;
-//                    //case 5: txtHelloWorld.setText((String)lv.getSelectedItem());
-
-//                }
             }
         });
 
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-////                try {
-////                    init(lv.getSelectedItemPosition());
-////                } catch (IOException e) {
-////                    Toast.makeText(getApplicationContext(), e.getMessage(),Toast.LENGTH_LONG).show();
-////                    e.printStackTrace();
-////                }
-////
-////                try {
-////                    bluetoothWrite("Hello World");
-////                } catch (IOException e) {
-////                   Toast.makeText(getApplicationContext(), e.getMessage(),Toast.LENGTH_LONG).show();
-////
-////                    e.printStackTrace();
-////                }
-//
-//
-//            }
-//        });
-
-        Log.d("helooooooooooooo","in");
-        Connection c = AzureDataBase.getInstace().CONN();
-        Log.d("helooooooooooooo","out");
-
-        String query = "select * from REFGISTROMALETA";
-        Statement stmt = null;
-        ResultSet rs;
-        try {
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        if(c!=null){
-            try {
-                c.close();
-                Log.d("helooooooooooooo","this dick");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        Log.d("helooooooooooooo","close");
-      //  txtBtInput.setText(rs.getNString());
+        Log.d("heloooooooooooooooo","yes");
+        txtBtInput.setText(AzureDataBase.getInstace().executeASDF("SELECT * FROM REGISTROMALETA"));
 
 
     }
