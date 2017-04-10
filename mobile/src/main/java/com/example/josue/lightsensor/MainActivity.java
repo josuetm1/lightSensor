@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     int readBufferPosition;
     volatile boolean stopWorker;
 
+    private MainActivity thisActivity;
 
     TextView txtBtInput;
     Button button;
@@ -133,21 +135,35 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Device> devices = new ArrayList<Device>();
 
         Device device = new Device("prueba", "desconectado", false);
-        devices.add(device);
+        DeviceList.getInstance().add(device);
 
-        AdapterDevice devicesAdapter = new AdapterDevice(this, devices);
+        AdapterDevice devicesAdapter = new AdapterDevice(this, DeviceList.getInstance());
 
         listView.setAdapter(devicesAdapter);
 ///////////////////////////////////
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findBT();
+                findBT("B8:27:EB:6D:E5:A0");
                 try {
                     openBT();
+                    sendData("enable");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+//                try {
+////                    Bluetooth.getInstance().connectTo("B8:27:EB:6D:E5:A0", thisActivity); // con case
+//                    Bluetooth.getInstance().connectTo("dispositivo", thisActivity); // sin case
+//                    Bluetooth.getInstance().sendData("enable");
+//                    txtBtInput.setText(Bluetooth.getInstance().receiveData());
+//                    Log.d("receiveData", "out");
+//                    Bluetooth.getInstance().closeBT();
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException i){
+//                    i.printStackTrace();
+//                }
 
 
             }
@@ -178,202 +194,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setMmDevice(){
-        pairedDevices = BA.getBondedDevices();
-        if(pairedDevices.size() > 0) {
-            for(BluetoothDevice device : pairedDevices) {
-                if(device.getName().equals("raspberrypi")) { //Note, you will need to change this to match the name of your device
-                    Log.e("Aquarium",device.getName());
-                    mmDevice = device;
-                    break;
-                }
-            }
-        }
-    }
-
-    public void bluetoothOn(){
-        if (!BA.isEnabled()) {
-            Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(turnOn, 0);
-            Toast.makeText(getApplicationContext(), "Turned on", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            Toast.makeText(getApplicationContext(),"Already on", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void bluetoothOff(){
-        BA.disable();
-        Toast.makeText(getApplicationContext(),"Turned off" ,Toast.LENGTH_LONG).show();
-    }
-
-    public  void bluetoothVisible(){
-        Intent getVisible = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        startActivityForResult(getVisible, 0);
-    }
-
-    public void bluetoothList(){
-        pairedDevices = BA.getBondedDevices();
-        ArrayList list = new ArrayList();
-
-        for(BluetoothDevice bt : pairedDevices)
-            list.add(bt.getName());
-        Toast.makeText(getApplicationContext(),"Showing Paired Devices",Toast.LENGTH_SHORT).show();
-
-        final ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, list);
-        lv.setAdapter(adapter);
-    }
 
 
-    //////////try 1 bluetooth send //////
-    private void init(int position) throws IOException {
-        BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (blueAdapter != null) {
-            if (blueAdapter.isEnabled()) {
-                Set<BluetoothDevice> bondedDevices = blueAdapter.getBondedDevices();
 
-                if(bondedDevices.size() > 0) {
-                    Object[] devices = (Object []) bondedDevices.toArray();
-                    BluetoothDevice device = (BluetoothDevice) devices[position];
-                    ParcelUuid[] uuids = device.getUuids();
-                    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuids[0].getUuid());
-                    socket.connect();
-                    outputStream = socket.getOutputStream();
-                    inStream = socket.getInputStream();
-                }
-
-                Log.e("error", "No appropriate paired devices.");
-            } else {
-                Log.e("error", "Bluetooth is disabled.");
-            }
-        }
-    }
-
-    public void bluetoothWrite(String s) throws IOException {
-        outputStream.write(s.getBytes());
-    }
-
-    public void run() {
-        final int BUFFER_SIZE = 1024;
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int bytes = 0;
-        int b = BUFFER_SIZE;
-
-        while (true) {
-            try {
-                bytes = inStream.read(buffer, bytes, BUFFER_SIZE - bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-///////////////para prueba 2 envio////////////
-public void sendBtMsg(String msg2send){
-    //UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"); //Standard SerialPortService ID
-    UUID uuid = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"); //Standard SerialPortService ID
-    try {
-
-       if(mmSocket == null) {
-           mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-       }
-        if (!mmSocket.isConnected()){
-            mmSocket.connect();
-        }
-
-        String msg = msg2send;
-        //msg += "\n";
-        OutputStream mmOutputStream = mmSocket.getOutputStream();
-        mmOutputStream.write(msg.getBytes());
-
-        if (msg.equals("exit")){
-            mmSocket.close();
-            mmSocket = null;
-        }
-
-    } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
-
-    (new Thread(new workerThread("temp"))).start();
-
-}
-
-    public void sendBluetoothString(String s){
-        (new Thread(new workerThread(s))).start();
-    }
-
-    ////////////////////prueba 2 de bluetooth envio y recibir//////////////
-    final Handler handler = new Handler();
-
-    final class workerThread implements Runnable {
-
-        private String btMsg;
-
-        public workerThread(String msg) {
-            btMsg = msg;
-        }
-
-        public void run(){
-
-           // sendBtMsg(btMsg);
-            while(!Thread.currentThread().isInterrupted()){
-                int bytesAvailable;
-                boolean workDone = false;
-
-                try {
-                    final InputStream mmInputStream;
-                    mmInputStream = mmSocket.getInputStream();
-                    bytesAvailable = mmInputStream.available();
-                    if(bytesAvailable > 0){
-                        byte[] packetBytes = new byte[bytesAvailable];
-                        Log.e("Aquarium recv bt","bytes available");
-                        byte[] readBuffer = new byte[1024];
-                        mmInputStream.read(packetBytes);
-
-                        for(int i=0;i<bytesAvailable;i++){
-                            byte b = packetBytes[i];
-                            if(b == delimiter){
-                                byte[] encodedBytes = new byte[readBufferPosition];
-                                System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
-                                final String data = new String(encodedBytes, "US-ASCII");
-                                readBufferPosition = 0;
-
-                                //The variable data now contains our full command
-                                handler.post(new Runnable(){
-                                    public void run()
-                                    {
-                                        txtBtInput.setText(data);
-                                    }
-                                });
-
-                                workDone = true;
-                                break;
-
-
-                            } else {
-                                readBuffer[readBufferPosition++] = b;
-                            }
-                        }
-
-                        if (workDone == true){
-                            mmSocket.close();
-                            break;
-                        }
-
-                    }
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    };
-//////////////////fin prueba 2 envio bluetooth////////////
 //////////inicio prueba 3 bluettoth//////////
-    void findBT() {
+    void findBT(String deviceID) {
     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     if(mBluetoothAdapter == null)
     {
@@ -391,7 +216,7 @@ public void sendBtMsg(String msg2send){
     {
         for(BluetoothDevice device : pairedDevices)
         {
-            if(device.getName().equals("raspberrypi"))
+            if(device.getAddress().equals(deviceID))
             {
                 mmDevice = device;
                 break;
@@ -454,7 +279,7 @@ public void sendBtMsg(String msg2send){
                                     {
                                         public void run()
                                         {
-                                            txtBtInput.setText(data);
+                                            processData(data);
                                         }
                                     });
                                 }
@@ -493,6 +318,23 @@ public void sendBtMsg(String msg2send){
         mmInputStream.close();
         mmSocket.close();
        // txtHelloWorld.setText("Bluetooth Closed");
+    }
+
+    void processData(String data){
+        txtBtInput.setText(data);
+        switch(data){
+            case "enabled":
+
+                try {
+                    sendData("yes");
+                    closeBT();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+
+        }
     }
 
 
