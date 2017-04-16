@@ -22,6 +22,7 @@ public class Device {
 
 
 
+
     public Device(String name, String state, boolean enable) {
         this.name = name;
         this.state = state;
@@ -68,4 +69,6 @@ public class Device {
     public void setId(long id) {
         this.id = id;
     }
+
+
 }

@@ -188,13 +188,14 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findBT("B8:27:EB:6D:E5:A0");
-                try {
-                    openBT();
-                    sendData("enable");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                findBT("B8:27:EB:6D:E5:A0");
+//                try {
+//                    openBT();
+//                    sendData("enable");
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+                stopService(new Intent(MainActivity.this, DeviceService.class));
 
             }
 
@@ -221,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("heloooooooooooooooo","yes");
         txtBtInput.setText(AzureDataBase.getInstace().executeASDF("SELECT * FROM REGISTROMALETA"));
 
+
+        startService(new Intent(MainActivity.this, DeviceService.class));
 
     }
 

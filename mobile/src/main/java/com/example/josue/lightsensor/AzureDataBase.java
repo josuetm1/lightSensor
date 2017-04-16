@@ -152,7 +152,10 @@ public class AzureDataBase {
                 stmt = c.createStatement();
                 rs = stmt.executeQuery("SELECT * FROM MALETA WHERE IDUSUARIO ='" + userID + "'");
                 while (rs.next()) {
-                    DeviceList.getInstance().add(new Device(rs.getString(1), "fromDB", false));
+                    Device device = new Device(rs.getString(1), "fromDB", false);
+                    if(!DeviceList.getInstance().contains(device)){
+                        DeviceList.getInstance().add(device);
+                    }
 
                 }
 
