@@ -6,6 +6,8 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import java.sql.*;
+import java.util.ArrayList;
+
 import com.microsoft.sqlserver.jdbc.*;
 
 /**
@@ -30,11 +32,40 @@ public class AzureDataBase {
     }
 ///////Singleton end///////////////
 
-    String ip = "travelsecurity.database.windows.net:1433";
-    String classs = "net.sourceforge.jtds.jdbc.Driver";
-    String db = "TravelSecurity";
-    String un = "ProyectoAdm@travelsecurity";
-    String password = "Proyecto0087";
+    private String userID;
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String email) {
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+        String ret = null;
+
+        if(c != null) {
+            try {
+                stmt = c.createStatement();
+                rs = stmt.executeQuery("SELECT IDUSUARIO FROM USUARIO WHERE EMAIL = '"+email+"'");
+                rs.next();
+                userID = rs.getString(1);
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private String ip = "travelsecurity.database.windows.net:1433";
+    private String classs = "net.sourceforge.jtds.jdbc.Driver";
+    private String db = "TravelSecurity";
+    private String un = "ProyectoAdm@travelsecurity";
+    private String password = "Proyecto0087";
+
+
+
 
     @SuppressLint("NewApi")
     public Connection CONN() {
@@ -82,4 +113,57 @@ public class AzureDataBase {
 
         return ret;
     }
+
+    public String[] getUsersAndPasswords(){
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+        ArrayList<String> ret = new ArrayList<>();
+
+        if(c != null) {
+            try {
+                stmt = c.createStatement();
+                rs = stmt.executeQuery("SELECT EMAIL,USERPASSWORD FROM USUARIO");
+                while (rs.next()){
+                    Log.d("usrs & pass list",rs.getString(1)+":"+rs.getString(2));
+                    ret.add(rs.getString(1)+":"+rs.getString(2));
+
+                }
+
+
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return ret.toArray(new String[ret.size()]);
+
+    }
+
+    public void fillUsersDeviceList() {
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+
+        if (c != null) {
+            try {
+                stmt = c.createStatement();
+                rs = stmt.executeQuery("SELECT * FROM MALETA WHERE IDUSUARIO ='" + userID + "'");
+                while (rs.next()) {
+                    DeviceList.getInstance().add(new Device(rs.getString(1), "fromDB", false));
+
+                }
+
+
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
 }

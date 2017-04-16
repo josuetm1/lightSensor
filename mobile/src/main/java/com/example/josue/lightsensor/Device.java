@@ -21,6 +21,7 @@ public class Device {
     protected Timestamp lastSeen;
 
 
+
     public Device(String name, String state, boolean enable) {
         this.name = name;
         this.state = state;

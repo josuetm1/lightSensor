@@ -3,12 +3,14 @@ package com.example.josue.lightsensor;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +40,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -114,8 +118,26 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//        View loginView = getLayoutInflater().inflate(R.layout.dialog_login, null);
+//        EditText loginEtEmail = (EditText) loginView.findViewById(R.id.etEmail);
+//        EditText loginEtPassword = (EditText) loginView.findViewById(R.id.etPassword);
+//        Button loginBtnLogIn = (Button) loginView.findViewById(R.id.btnLogIn);
+//        Button loginBtnSingIn = (Button) loginView.findViewById(R.id.btnSingIn);
+//
+//        loginBtnLogIn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//
+//            }
+//        });
+
+
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         ListView listView = (ListView) findViewById(R.id.listViewDevices);
+        listView.setLongClickable(true);
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
 ////////make tabhost///////////
         tabHost.setup();
@@ -132,14 +154,36 @@ public class MainActivity extends AppCompatActivity {
 
 
 /////////////make device list/////
-        ArrayList<Device> devices = new ArrayList<Device>();
+//        ArrayList<Device> devices = new ArrayList<Device>();
 
-        Device device = new Device("prueba", "desconectado", false);
-        DeviceList.getInstance().add(device);
+//        Device device = new Device("prueba", "desconectado", false);
+//        AzureDataBase.getInstace().fillUsersDeviceList();
+
 
         AdapterDevice devicesAdapter = new AdapterDevice(this, DeviceList.getInstance());
 
         listView.setAdapter(devicesAdapter);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("Long clicked","pos:"+String.valueOf(position));
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Options")
+                        .setItems(new String[]{"Refresh","Delete","Toggle Alarm"}, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(MainActivity.this,"Selectec #:"+ String.valueOf(which),Toast.LENGTH_LONG).show();
+                                switch (which){
+                                    case 1:
+
+                                        break;
+                                }
+                            }
+                        });
+                builder.create().show();
+                return false;
+            }
+        });
 ///////////////////////////////////
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,20 +195,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                try {
-////                    Bluetooth.getInstance().connectTo("B8:27:EB:6D:E5:A0", thisActivity); // con case
-//                    Bluetooth.getInstance().connectTo("dispositivo", thisActivity); // sin case
-//                    Bluetooth.getInstance().sendData("enable");
-//                    txtBtInput.setText(Bluetooth.getInstance().receiveData());
-//                    Log.d("receiveData", "out");
-//                    Bluetooth.getInstance().closeBT();
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                } catch (InterruptedException i){
-//                    i.printStackTrace();
-//                }
-
 
             }
 
