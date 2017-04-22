@@ -86,15 +86,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        for( Device device: DeviceList.getInstance()){
+            add(device.getName(),device.getLatLng());
+        }
+
         // Add a marker in Sydney and move the camera
-        LatLng latLng = new LatLng(19.461011, -70.682417);
-        add("12D", latLng);
-        latLng = new LatLng(19.461011, -71.682417);
-        add("12D42342342", latLng);
-        add("3", latLng);
-        update("3", new LatLng(19.461011, -72.682417));
-        remove("12D42342342");
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//        LatLng latLng = new LatLng(19.461011, -70.682417);
+//        add("12D", latLng);
+//        latLng = new LatLng(19.461011, -71.682417);
+//        add("12D42342342", latLng);
+//        add("3", latLng);
+//        update("3", new LatLng(19.461011, -72.682417));
+//        remove("12D42342342");
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DeviceList.getInstance().get(0).getLatLng(),10));
+
         final MapsActivity act = this;
         GoogleMap.OnMarkerClickListener OnMarkerClickListener =new GoogleMap.OnMarkerClickListener() {
             @Override

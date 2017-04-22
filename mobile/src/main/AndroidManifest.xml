@@ -50,7 +50,7 @@
 
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login">
+            android:label="Travel Security">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -59,6 +59,7 @@
             </intent-filter>
         </activity>
         <service android:name=".DeviceService"/>
+        <receiver android:process=":remote" android:name=".DeviceServiceAlarm"></receiver>
     </application>
 
 </manifest>

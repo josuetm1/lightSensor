@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -43,11 +44,13 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MainActivity extends AppCompatActivity {
 
 
     ////ejemplo 3 bluetooth////
+    //private ReentrantLock btLock = new ReentrantLock();
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice;
@@ -118,22 +121,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//        View loginView = getLayoutInflater().inflate(R.layout.dialog_login, null);
-//        EditText loginEtEmail = (EditText) loginView.findViewById(R.id.etEmail);
-//        EditText loginEtPassword = (EditText) loginView.findViewById(R.id.etPassword);
-//        Button loginBtnLogIn = (Button) loginView.findViewById(R.id.btnLogIn);
-//        Button loginBtnSingIn = (Button) loginView.findViewById(R.id.btnSingIn);
-//
-//        loginBtnLogIn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//
-//            }
-//        });
-
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         ListView listView = (ListView) findViewById(R.id.listViewDevices);
@@ -153,30 +140,29 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(tabSpecDebug);
 
 
-/////////////make device list/////
-//        ArrayList<Device> devices = new ArrayList<Device>();
 
-//        Device device = new Device("prueba", "desconectado", false);
-//        AzureDataBase.getInstace().fillUsersDeviceList();
 
 
         AdapterDevice devicesAdapter = new AdapterDevice(this, DeviceList.getInstance());
 
         listView.setAdapter(devicesAdapter);
 
+
+
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 Log.d("Long clicked","pos:"+String.valueOf(position));
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Options")
                         .setItems(new String[]{"Refresh","Delete","Toggle Alarm"}, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(MainActivity.this,"Selectec #:"+ String.valueOf(which),Toast.LENGTH_LONG).show();
+                             //   Toast.makeText(MainActivity.this,"Selectec #:"+ String.valueOf(which),Toast.LENGTH_LONG).show();
                                 switch (which){
                                     case 1:
-
+                                        AzureDataBase.getInstace().deleteDevice(position);
                                         break;
+
                                 }
                             }
                         });
@@ -195,7 +181,34 @@ public class MainActivity extends AppCompatActivity {
 //                } catch (IOException e) {
 //                    e.printStackTrace();
 //                }
-                stopService(new Intent(MainActivity.this, DeviceService.class));
+              //  stopService(new Intent(MainActivity.this, DeviceService.class));
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Digite la MAC Address");
+
+// Set up the input
+                final EditText input = new EditText(MainActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+// Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AzureDataBase.getInstace().addDevice(input.getText().toString());
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
 
             }
 
@@ -210,7 +223,9 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 //txtHelloWorld.setText(txtInput.getText().toString());
+                findBT("B8:27:EB:6D:E5:A0");
                 try {
+                    openBT();
                     sendData(txtInput.getText().toString());
                     Log.d(txtInput.getText().toString(),"yes");
                 } catch (IOException e) {
@@ -223,7 +238,10 @@ public class MainActivity extends AppCompatActivity {
         txtBtInput.setText(AzureDataBase.getInstace().executeASDF("SELECT * FROM REGISTROMALETA"));
 
 
-        startService(new Intent(MainActivity.this, DeviceService.class));
+        //startService(new Intent(MainActivity.this, DeviceService.class));
+
+        DeviceCheckTask deviceCheckTask = new DeviceCheckTask(MainActivity.this);
+        deviceCheckTask.execute();
 
     }
 
@@ -261,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
 
     void openBT() throws IOException {
     //UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+       // btLock.lock();
         UUID uuid = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
         mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
         mmSocket.connect();
@@ -307,6 +326,7 @@ public class MainActivity extends AppCompatActivity {
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
                                     final String data = new String(encodedBytes, "US-ASCII");
                                     readBufferPosition = 0;
+                                    Log.d("bluetoothRecv", data);
 
                                     handler.post(new Runnable()
                                     {
@@ -350,6 +370,7 @@ public class MainActivity extends AppCompatActivity {
         mmOutputStream.close();
         mmInputStream.close();
         mmSocket.close();
+      //  btLock.unlock();
        // txtHelloWorld.setText("Bluetooth Closed");
     }
 

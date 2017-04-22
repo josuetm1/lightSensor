@@ -47,10 +47,17 @@ public class AdapterDevice extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.item_list, null);
         }
-        Device device = devices.get(position);
+        final Device device = devices.get(position);
 
-        Switch enableSwitch = (Switch) v.findViewById(R.id.switchEnable);
+        final Switch enableSwitch = (Switch) v.findViewById(R.id.switchEnable);
         enableSwitch.setChecked(device.getEnable());
+
+        enableSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                device.setEnable(enableSwitch.isChecked());
+            }
+        });
 
         TextView deviceName = (TextView) v.findViewById(R.id.textViewDevice);
         deviceName.setText(device.getName());

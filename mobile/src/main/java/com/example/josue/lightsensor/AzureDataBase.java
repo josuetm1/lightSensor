@@ -168,5 +168,44 @@ public class AzureDataBase {
     }
 
 
+    public void deleteDevice(int position) {
 
+        Connection c = CONN();
+        Statement stmt;
+
+
+        if (c != null) {
+            try {
+                stmt = c.createStatement();
+                stmt.executeUpdate("DELETE FROM REGISTROMALETA WHERE IDMALETA ='" + DeviceList.getInstance().get(position).getName() + "'");
+                stmt.executeUpdate("DELETE FROM MALETA WHERE IDMALETA ='" + DeviceList.getInstance().get(position).getName() + "'");
+                DeviceList.getInstance().remove(position);
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+    public void addDevice(String deviceName) {
+
+        Connection c = CONN();
+        Statement stmt;
+
+
+        if (c != null) {
+            try {
+                stmt = c.createStatement();
+                stmt.executeUpdate("INSERT INTO MALETA (IDMALETA,IDUSUARIO) VALUES('"+deviceName+"','"+userID+"')");
+                Device device = new Device(deviceName, "fromUser", false);
+                if(!DeviceList.getInstance().contains(device)){
+                    DeviceList.getInstance().add(device);
+                }
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 }
