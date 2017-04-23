@@ -38,7 +38,7 @@ public class DeviceCheckTask extends AsyncTask<Void,Void,Void> {
                         Bluetooth.getInstance().sendData("status");
                         Log.d("In Background!!!!!!!!", device.getName()+" 4");
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        AzureDataBase.getInstace().getDeviceStatus(0);
                     }
                 }
             }

@@ -18,7 +18,7 @@ public class Device {
     protected long id;
     protected String macAddress;
     protected LatLng latLng;
-    protected Timestamp lastSeen;
+    protected Timestamp lastSeen = Timestamp.valueOf("1999-01-01 01:01:01");
 
 
 
@@ -35,7 +35,7 @@ public class Device {
         this.enable = enable;
         this.macAddress = macAddress;
         this.latLng = latLng;
-        this.lastSeen = Timestamp.valueOf("1999-1-1 1:1:1");
+        //this.lastSeen = Timestamp.valueOf("1999-1-1 1:1:1");
     }
 
     public String getName() {

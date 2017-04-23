@@ -8,6 +8,7 @@ import android.util.Log;
 import java.sql.*;
 import java.util.ArrayList;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.microsoft.sqlserver.jdbc.*;
 
 /**
@@ -206,6 +207,40 @@ public class AzureDataBase {
                 e.printStackTrace();
             }
         }
+
+    }
+
+    public void getDeviceStatus(int i) {
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+        LatLng tempLatLong;
+        Timestamp tempTime;
+        Device device = DeviceList.getInstance().get(i);
+
+        if (c != null) {
+            try {
+                stmt = c.createStatement();
+                rs = stmt.executeQuery("SELECT TOP 1 * FROM REGISTROMALETA WHERE IDMALETA = '" + device.getName() + "' ORDER BY IDREGISTROMALETA DESC");
+                while (rs.next()) {
+                    tempLatLong = new LatLng(Double.valueOf(rs.getString(4)),Double.valueOf(rs.getString(5)));
+                    Log.d("refresh device", tempLatLong.toString());
+                    tempTime = rs.getTimestamp(6);
+                    Log.d("refresh device", tempTime.toString());
+                    Log.d("refresh device", device.getLastSeen().toString());
+
+                    if(tempTime.after(device.getLastSeen())){
+                        device.setLastSeen(tempTime);
+                        device.setLatLng(tempLatLong);
+                    }
+                }
+
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
 
     }
 }
