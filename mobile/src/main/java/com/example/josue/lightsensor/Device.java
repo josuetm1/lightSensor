@@ -12,7 +12,11 @@ import java.sql.Timestamp;
  */
 
 public class Device {
-    protected String name;
+    protected String name; //this is the macAddress
+    private String nameUser;
+    protected String brand;
+    protected String color;
+    protected String size;
     protected String state;
     protected boolean enable;
     protected long id;
@@ -22,6 +26,9 @@ public class Device {
 
 
 
+    public Device(){
+
+    }
 
     public Device(String name, String state, boolean enable) {
         this.name = name;
@@ -88,6 +95,7 @@ public class Device {
 
     public void setLatLng(LatLng latLng) {
         this.latLng = latLng;
+
     }
 
     public Timestamp getLastSeen() {
@@ -96,5 +104,37 @@ public class Device {
 
     public void setLastSeen(Timestamp lastSeen) {
         this.lastSeen = lastSeen;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }

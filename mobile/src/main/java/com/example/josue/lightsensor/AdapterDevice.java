@@ -63,8 +63,13 @@ public class AdapterDevice extends BaseAdapter {
         deviceName.setText(device.getName());
 
         TextView deviceState = (TextView) v.findViewById(R.id.textViewState);
-        deviceState.setText(device.getState());
+        if(device.getLastSeen().toString().equals("1999-01-01 01:01:01")){
+            deviceState.setText("refresh lastseen");
+        }
 
+        else {
+            deviceState.setText(device.getLastSeen().toString());
+        }
 
         return v;
     }

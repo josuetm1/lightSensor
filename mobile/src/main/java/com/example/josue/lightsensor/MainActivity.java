@@ -1,5 +1,6 @@
 package com.example.josue.lightsensor;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -10,6 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.ParcelUuid;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +23,7 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +49,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -53,7 +59,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    Handler handler = new Handler(Looper.getMainLooper());
+    ListView listView;
+    AdapterDevice devicesAdapter;
+    String enableOrDisableAlarm = "Enable";
+    DeviceCheckTask deviceCheckTask;
     ////ejemplo 3 bluetooth////
     //private ReentrantLock btLock = new ReentrantLock();
     BluetoothAdapter mBluetoothAdapter;
@@ -128,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        ListView listView = (ListView) findViewById(R.id.listViewDevices);
+        listView = (ListView) findViewById(R.id.listViewDevices);
         listView.setLongClickable(true);
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
 ////////make tabhost///////////
@@ -148,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        AdapterDevice devicesAdapter = new AdapterDevice(this, DeviceList.getInstance());
+        devicesAdapter = new AdapterDevice(this, DeviceList.getInstance());
 
         listView.setAdapter(devicesAdapter);
 
@@ -160,14 +170,31 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Long clicked","pos:"+String.valueOf(position));
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Options")
-                        .setItems(new String[]{"Refresh","Delete","Toggle Alarm"}, new DialogInterface.OnClickListener() {
+                        .setItems(new String[]{"Check Last Seen","Delete",enableOrDisableAlarm+" Alarm","Set Thresholds"}, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                              //   Toast.makeText(MainActivity.this,"Selectec #:"+ String.valueOf(which),Toast.LENGTH_LONG).show();
                                 switch (which){
+                                    case 0:
+                                        devicesAdapter.notifyDataSetChanged();
+                                        break;
                                     case 1:
                                         AzureDataBase.getInstace().deleteDevice(position);
+                                        devicesAdapter.notifyDataSetChanged();
                                         break;
-
+                                    case 2:
+                                        try {
+                                            deviceCheckTask.toSend.put(enableOrDisableAlarm.toLowerCase());
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                    case 3:
+                                        try {
+                                            deviceCheckTask.toSend.put("config high");
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
                                 }
                             }
                         });
@@ -179,40 +206,34 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                findBT("B8:27:EB:6D:E5:A0");
-//                try {
-//                    openBT();
-//                    sendData("enable");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-              //  stopService(new Intent(MainActivity.this, DeviceService.class));
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Digite la MAC Address");
-
-// Set up the input
-                final EditText input = new EditText(MainActivity.this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                builder.setView(input);
-
-// Set up the buttons
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        AzureDataBase.getInstace().addDevice(input.getText().toString());
-
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
+//                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                builder.setTitle("Digite la MAC Address");
+//
+//// Set up the input
+//                final EditText input = new EditText(MainActivity.this);
+//// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+//                input.setInputType(InputType.TYPE_CLASS_TEXT);
+//                builder.setView(input);
+//
+//// Set up the buttons
+//                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        AzureDataBase.getInstace().addDevice(input.getText().toString());
+//
+//                    }
+//                });
+//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                });
+//
+//                builder.show();
+                DeviceList.getInstance().add(new Device());
+                launchAddDialog1(DeviceList.getInstance().size() - 1);
 
 
             }
@@ -245,19 +266,19 @@ public class MainActivity extends AppCompatActivity {
 
         //startService(new Intent(MainActivity.this, DeviceService.class));
 
-        DeviceCheckTask deviceCheckTask = new DeviceCheckTask(MainActivity.this);
+        deviceCheckTask = new DeviceCheckTask(MainActivity.this);
         deviceCheckTask.execute();
 
-        launchNotification();
+     //   launchNotification();
 
     }
 
-    private void launchNotification() {
+    public void launchNotification() {
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setContentTitle("Alarm")
+                        .setContentText("The device "+DeviceList.getInstance().get(0).getName()+" opened");
 // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, LoginActivity.class);
 
@@ -279,8 +300,11 @@ public class MainActivity extends AppCompatActivity {
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 // mId allows you to update the notification later on.
+        Notification notification = mBuilder.build();
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        mNotificationManager.notify(10, notification);
 
-        mNotificationManager.notify(10, mBuilder.build());
     }
 
 
@@ -411,21 +435,169 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void processData(String data){
-        txtBtInput.setText(data);
-        switch(data){
-            case "enabled":
+        Log.d("bluetoothRecv", data);
 
+        if(data.equals("enabled")){
+            try {
+                //   sendData("yes");
+                closeBT();
+                enableOrDisableAlarm = "Disable";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else  if(data.equals("disabled")){
+            try {
+                //  sendData("yes");
+                closeBT();
+                enableOrDisableAlarm = "enable";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else if(data.equals("set out")){
+            launchDialog("set out");
+        } else if(data.equals("set open")){
+            launchDialog("set open");
+        } else if(data.equals("set close")){
+            launchDialog("set close");
+        } else if(data.split(" ")[0].equals("configured")){
+            try {
+                deviceCheckTask.toSend.put("okidoki");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+
+            String[] aux = data.split(" ");
+            //check if alarm was enabled
+            if (Boolean.valueOf(aux[1])) {
+                launchNotification();
                 try {
-                    sendData("yes");
-                    closeBT();
+                    sendData("alarm ack");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
-
+            }
+            DeviceList.getInstance().get(0).setLastSeen(new Timestamp(System.currentTimeMillis()));
+            DeviceList.getInstance().get(0).setLatLng(new LatLng(Double.valueOf(aux[2]), Double.valueOf(aux[3])));
+            try {
+                closeBT();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
+
+    void launchDialog (final String toSend){
+        String place = "in";
+        if(toSend.equals("set out"))
+            place = "out of the luggage";
+        else if (toSend.equals("set closed"))
+            place = "inside of the luggage closed";
+        else if (toSend.equals("set open"))
+            place = "inside of the luggage opened";
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+// Add the buttons
+        builder.setTitle("Configuring Thresholds");
+
+
+        builder.setMessage("Put your device "+place+", then press OK");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                try {
+                    Log.d("In Dialog OK", toSend);
+                    deviceCheckTask.toSend.put(toSend);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+// Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        builder.show();
+    }
+
+    public void launchAddDialog1(final int devicePosition){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        // Get the layout inflater
+        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+
+        builder.setView(inflater.inflate(R.layout.dialog_add_device, null))
+                // Add action buttons
+                .setPositiveButton("Next", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText etName = (EditText) findViewById(R.id.editTextName);
+                        EditText etBrand = (EditText) findViewById(R.id.editTextBrand);
+                        EditText etColor = (EditText) findViewById(R.id.editTextColor);
+                        EditText etSize = (EditText) findViewById(R.id.editTextSize);
+                        Log.d("in dialog", "hello world");
+                     //   Log.d("dialogs text", etBrand.getText().toString());
+                        if(etName.getText() != null && etBrand.getText() != null && etColor.getText() != null && etSize.getText() != null) {
+                            DeviceList.getInstance().get(devicePosition).setNameUser(etName.getText().toString());
+                            DeviceList.getInstance().get(devicePosition).setBrand(etBrand.getText().toString());
+                            DeviceList.getInstance().get(devicePosition).setColor(etColor.getText().toString());
+                            DeviceList.getInstance().get(devicePosition).setSize(etSize.getText().toString());
+                            launchAddDialog2(devicePosition);
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Please fill every field", Toast.LENGTH_LONG);
+                            //launchAddDialog1(devicePosition);
+                        }
+
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        final AlertDialog dialog = builder.show();
+
+
+
+    }
+
+    public void launchAddDialog2(final int devicePosition){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        // Get the layout inflater
+        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+
+        builder.setView(inflater.inflate(R.layout.dialog_add_device, null))
+                // Add action buttons
+                .setPositiveButton("Finish", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+
+                    }
+                })
+                .setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        launchAddDialog1(devicePosition);
+                    }
+                });
+
+
+
+    }
+
+    public void handleMessage (Message inputMessage){
+        launchDialog((String)inputMessage.obj);
+    }
+
 
 
 /////////////////dont know//////////////////////

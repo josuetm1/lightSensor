@@ -1,11 +1,16 @@
 package com.example.josue.lightsensor;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -30,8 +35,17 @@ public class Bluetooth {
 
     private Bluetooth() {
     }
+    private MainActivity mainActivity;
 
-  //  private ReentrantLock btLock = new ReentrantLock();
+    public MainActivity getMainActivity() {
+        return mainActivity;
+    }
+
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+    }
+
+    //  private ReentrantLock btLock = new ReentrantLock();
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice;
@@ -170,33 +184,76 @@ public class Bluetooth {
     void processData(String data){
         Log.d("bluetoothRecv", data);
 
-//        if(data.equals("enabled")){
-//            try {
-//                sendData("yes");
-//                closeBT();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else if(true){
-//
-//        }
-        String[] aux = data.split(" ");
-        //check if alarm was enabled
-        if(Boolean.valueOf(aux[1])){
-            //ToDo Launch notification
+        if(data.equals("enabled")){
             try {
-                sendData("alarm ack");
+             //   sendData("yes");
+                closeBT();
+                mainActivity.enableOrDisableAlarm = "Disable";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else  if(data.equals("disabled")){
+            try {
+              //  sendData("yes");
+                closeBT();
+                mainActivity.enableOrDisableAlarm = "Enable";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else if(data.equals("set out")){
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mainActivity.launchDialog("set out");
+                }
+            });
+        } else if(data.equals("set open")){
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mainActivity.launchDialog("set open");
+                }
+            });
+        } else if(data.equals("set closed")){
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mainActivity.launchDialog("set closed");
+                }
+            });
+        } else if(data.split(" ")[0].equals("configured")){
+            try {
+                mainActivity.deviceCheckTask.toSend.put("okidoki");
+                closeBT();
+                Log.d("bluetooth pross", "okidoki in queue");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+
+            String[] aux = data.split(" ");
+            //check if alarm was enabled
+            if (Boolean.valueOf(aux[1])) {
+                mainActivity.launchNotification();
+                try {
+                    sendData("alarm ack");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            DeviceList.getInstance().get(0).setLastSeen(new Timestamp(System.currentTimeMillis()));
+            DeviceList.getInstance().get(0).setLatLng(new LatLng(Double.valueOf(aux[2]), Double.valueOf(aux[3])));
+            try {
+                closeBT();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        DeviceList.getInstance().get(0).setLastSeen(new Timestamp(System.currentTimeMillis()));
-        DeviceList.getInstance().get(0).setLatLng(new LatLng(Double.valueOf(aux[2]),Double.valueOf(aux[3])));
-        try {
-            closeBT();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
+
+
 }

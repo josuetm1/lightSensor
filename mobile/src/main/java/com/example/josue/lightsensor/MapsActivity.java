@@ -87,7 +87,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         for( Device device: DeviceList.getInstance()){
-            add(device.getName(),device.getLatLng());
+            if(device.getLatLng() != null) {
+                add(device.getName(), device.getLatLng());
+            }
         }
 
         // Add a marker in Sydney and move the camera
@@ -99,8 +101,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        update("3", new LatLng(19.461011, -72.682417));
 //        remove("12D42342342");
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DeviceList.getInstance().get(0).getLatLng(),10));
-
+        if(DeviceList.getInstance().get(0).getLatLng() != null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DeviceList.getInstance().get(0).getLatLng(), 10));
+        }
         final MapsActivity act = this;
         GoogleMap.OnMarkerClickListener OnMarkerClickListener =new GoogleMap.OnMarkerClickListener() {
             @Override
