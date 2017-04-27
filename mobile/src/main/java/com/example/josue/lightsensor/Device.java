@@ -1,5 +1,7 @@
 package com.example.josue.lightsensor;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.Switch;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -11,7 +13,7 @@ import java.sql.Timestamp;
  * Created by Josue on 02/12/16.
  */
 
-public class Device {
+public class Device implements Parcelable{
     protected String name; //this is the macAddress
     private String nameUser;
     protected String brand;
@@ -44,6 +46,31 @@ public class Device {
         this.latLng = latLng;
         //this.lastSeen = Timestamp.valueOf("1999-1-1 1:1:1");
     }
+
+    protected Device(Parcel in) {
+        name = in.readString();
+        nameUser = in.readString();
+        brand = in.readString();
+        color = in.readString();
+        size = in.readString();
+        state = in.readString();
+        enable = in.readByte() != 0;
+        id = in.readLong();
+        macAddress = in.readString();
+        latLng = in.readParcelable(LatLng.class.getClassLoader());
+    }
+
+    public static final Creator<Device> CREATOR = new Creator<Device>() {
+        @Override
+        public Device createFromParcel(Parcel in) {
+            return new Device(in);
+        }
+
+        @Override
+        public Device[] newArray(int size) {
+            return new Device[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -136,5 +163,24 @@ public class Device {
 
     public void setSize(String size) {
         this.size = size;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(nameUser);
+        dest.writeString(brand);
+        dest.writeString(color);
+        dest.writeString(size);
+        dest.writeString(state);
+        dest.writeByte((byte) (enable ? 1 : 0));
+        dest.writeLong(id);
+        dest.writeString(macAddress);
+        dest.writeParcelable(latLng, flags);
     }
 }

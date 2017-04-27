@@ -522,74 +522,82 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchAddDialog1(final int devicePosition){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        // Get the layout inflater
-        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//        // Get the layout inflater
+//        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+//
+//
+//        // Inflate and set the layout for the dialog
+//        // Pass null as the parent view because its going in the dialog layout
+//
+//        builder.setView(inflater.inflate(R.layout.dialog_add_device, null))
+//                // Add action buttons
+//                .setPositiveButton("Next", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        EditText etName = (EditText) findViewById(R.id.editTextName);
+//                        EditText etBrand = (EditText) findViewById(R.id.editTextBrand);
+//                        EditText etColor = (EditText) findViewById(R.id.editTextColor);
+//                        EditText etSize = (EditText) findViewById(R.id.editTextSize);
+//                        Log.d("in dialog", "hello world");
+//                     //   Log.d("dialogs text", etBrand.getText().toString());
+//                        if(etName.getText() != null && etBrand.getText() != null && etColor.getText() != null && etSize.getText() != null) {
+//                            DeviceList.getInstance().get(devicePosition).setNameUser(etName.getText().toString());
+//                            DeviceList.getInstance().get(devicePosition).setBrand(etBrand.getText().toString());
+//                            DeviceList.getInstance().get(devicePosition).setColor(etColor.getText().toString());
+//                            DeviceList.getInstance().get(devicePosition).setSize(etSize.getText().toString());
+//                            launchAddDialog2(devicePosition);
+//                            dialog.dismiss();
+//                        } else {
+//                            Toast.makeText(MainActivity.this, "Please fill every field", Toast.LENGTH_LONG);
+//                            //launchAddDialog1(devicePosition);
+//                        }
+//
+//                    }
+//                })
+//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//
+//                    }
+//                });
+//
+//        final AlertDialog dialog = builder.show();
+//        //final EditText etName = (EditText) dialog.findViewById(R.id.editTextName);
 
+        Intent intent = new Intent(this, AddDeviceActivity.class);
+        Bundle b = new Bundle();
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
+        intent.putExtra("device",new Device());
+        startActivity(intent);
 
-        builder.setView(inflater.inflate(R.layout.dialog_add_device, null))
-                // Add action buttons
-                .setPositiveButton("Next", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText etName = (EditText) findViewById(R.id.editTextName);
-                        EditText etBrand = (EditText) findViewById(R.id.editTextBrand);
-                        EditText etColor = (EditText) findViewById(R.id.editTextColor);
-                        EditText etSize = (EditText) findViewById(R.id.editTextSize);
-                        Log.d("in dialog", "hello world");
-                     //   Log.d("dialogs text", etBrand.getText().toString());
-                        if(etName.getText() != null && etBrand.getText() != null && etColor.getText() != null && etSize.getText() != null) {
-                            DeviceList.getInstance().get(devicePosition).setNameUser(etName.getText().toString());
-                            DeviceList.getInstance().get(devicePosition).setBrand(etBrand.getText().toString());
-                            DeviceList.getInstance().get(devicePosition).setColor(etColor.getText().toString());
-                            DeviceList.getInstance().get(devicePosition).setSize(etSize.getText().toString());
-                            launchAddDialog2(devicePosition);
-                            dialog.dismiss();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Please fill every field", Toast.LENGTH_LONG);
-                            //launchAddDialog1(devicePosition);
-                        }
-
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-
-        final AlertDialog dialog = builder.show();
 
 
 
     }
 
     public void launchAddDialog2(final int devicePosition){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        // Get the layout inflater
-        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
-
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-
-        builder.setView(inflater.inflate(R.layout.dialog_add_device, null))
-                // Add action buttons
-                .setPositiveButton("Finish", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-
-                    }
-                })
-                .setNegativeButton("Back", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        launchAddDialog1(devicePosition);
-                    }
-                });
-
+//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//        // Get the layout inflater
+//        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+//
+//        // Inflate and set the layout for the dialog
+//        // Pass null as the parent view because its going in the dialog layout
+//
+//        builder.setView(inflater.inflate(R.layout.dialog_add_device, null))
+//                // Add action buttons
+//                .setPositiveButton("Finish", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//
+//
+//                    }
+//                })
+//                .setNegativeButton("Back", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        launchAddDialog1(devicePosition);
+//                    }
+//                });
+//
 
 
     }
