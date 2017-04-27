@@ -28,6 +28,7 @@ public class AddDeviceActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.device = (Device) intent.getParcelableExtra("device");
 
+
         editTextName = (EditText) findViewById(R.id.editTextName);
         editTextBrand = (EditText) findViewById(R.id.editTextBrand);
         editTextColor = (EditText) findViewById(R.id.editTextColor);
@@ -35,8 +36,8 @@ public class AddDeviceActivity extends AppCompatActivity {
         buttonNext = (Button) findViewById(R.id.buttonNext);
         buttonCancel = (Button) findViewById(R.id.buttonCancel);
 
-        if(device.getName() != null)
-            editTextName.setText(device.getName());
+        if(device.getNameUser() != null)
+            editTextName.setText(device.getNameUser());
         if(device.getBrand() != null)
             editTextBrand.setText(device.getBrand());
         if(device.getColor() != null)
@@ -76,6 +77,9 @@ public class AddDeviceActivity extends AppCompatActivity {
     }
 
     public void launchAddActivity2(Device device) {
+        Intent intent = new Intent(AddDeviceActivity.this,AddDeviceSecondActivity.class);
+        intent.putExtra("device", device);
+        startActivity(intent);
 
     }
 }

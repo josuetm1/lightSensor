@@ -232,9 +232,11 @@ public class MainActivity extends AppCompatActivity {
 //                });
 //
 //                builder.show();
-                DeviceList.getInstance().add(new Device());
-                launchAddDialog1(DeviceList.getInstance().size() - 1);
-
+               // DeviceList.getInstance().add(new Device());
+//                launchAddDialog1(DeviceList.getInstance().size() - 1);
+                Intent intent = new Intent(MainActivity.this, AddDeviceActivity.class);
+                intent.putExtra("device",new Device());
+                startActivity(intent);
 
             }
 
@@ -271,6 +273,11 @@ public class MainActivity extends AppCompatActivity {
 
      //   launchNotification();
 
+    }
+
+    protected void onRestart(){
+        super.onRestart();
+        devicesAdapter.notifyDataSetChanged();
     }
 
     public void launchNotification() {
@@ -564,11 +571,7 @@ public class MainActivity extends AppCompatActivity {
 //        final AlertDialog dialog = builder.show();
 //        //final EditText etName = (EditText) dialog.findViewById(R.id.editTextName);
 
-        Intent intent = new Intent(this, AddDeviceActivity.class);
-        Bundle b = new Bundle();
 
-        intent.putExtra("device",new Device());
-        startActivity(intent);
 
 
 

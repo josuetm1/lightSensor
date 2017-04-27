@@ -22,12 +22,12 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Travel Security"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="Lista de dispositivos"
+            android:label="Device List"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -60,8 +60,12 @@
             android:name=".DeviceServiceAlarm"
             android:process=":remote" />
 
-        <activity android:name=".AddDeviceActivity" />
-        <activity android:name=".AddDeviceSecondActivity"></activity>
+        <activity
+            android:name=".AddDeviceActivity"
+            android:label="Add Device Step 1"/>
+        <activity
+            android:name=".AddDeviceSecondActivity"
+            android:label="Add Device Step 2"/>
     </application>
 
 </manifest>
