@@ -59,6 +59,57 @@ public class AzureDataBase {
 
     }
 
+    public boolean user_exist(String email){
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+        String ret = null;
+
+        if(c != null) {
+            try {
+                stmt = c.createStatement();
+                rs = stmt.executeQuery("SELECT Count(*) FROM USUARIO WHERE EMAIL = '"+email+"'");
+                rs.next();
+                int count = rs.getInt(1);
+                if (count>0){
+                    return true;
+                }
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public boolean save_user(String nombre, String apellido, String email, String password){
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+        String ret = null;
+
+        if(c != null) {
+            try {
+                stmt = c.createStatement();
+                String sql = "INSERT INTO USUARIO (IDUSUARIO, FIRSTNAME,FIRSTLASTNAME,USERPASSWORD,EMAIL) VALUES("+
+                        "'" +email+"', " +
+                        "'" +nombre+"', " +
+                        "'" +apellido+"', " +
+                        "'" +password+"', " +
+                        "'" +email+"'"
+                        +")";
+                Log.d("Debug",sql);
+                stmt.executeUpdate(sql);
+
+                c.close();
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
     private String ip = "travelsecurity.database.windows.net:1433";
     private String classs = "net.sourceforge.jtds.jdbc.Driver";
     private String db = "TravelSecurity";
