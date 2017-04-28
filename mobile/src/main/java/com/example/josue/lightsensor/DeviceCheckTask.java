@@ -38,6 +38,7 @@ public class DeviceCheckTask extends AsyncTask<Void,Void,Void> {
                 e.printStackTrace();
             }
             Log.d("In Background!!!!!!!!", "yes");
+
             for (Device device: DeviceList.getInstance()) {
                 if(device.getEnable()) {
                     Log.d("In Background!!!!!!!!", device.getName()+" 1");
@@ -48,12 +49,19 @@ public class DeviceCheckTask extends AsyncTask<Void,Void,Void> {
 //                        mainActivity.openBT();
                         Bluetooth.getInstance().openBT();
                         Log.d("In Background!!!!!!!!", device.getName()+" 3");
-                        if(toSend.peek().equals("config high")){
+                        if(toSend.contains("config high")){
                             Log.d("In Background que",toSend.toString());
                             toSend.clear();
                             toSend.put("config high");
                             isConfiguring = true;
                             waitForSend = true;
+                            final String deviceToCalibrate = device.getNameUser();
+                            mainActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(mainActivity,"Calibration started for device '"+deviceToCalibrate+"', wait for instructions",Toast.LENGTH_LONG).show();
+                                }
+                            });
                         } else {
 //                            mainActivity.sendData(toSend.take());
 
@@ -75,6 +83,12 @@ public class DeviceCheckTask extends AsyncTask<Void,Void,Void> {
                                 toSend.take();
                                 toSend.put("status");
                                 Bluetooth.getInstance().closeBT();
+                                mainActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(mainActivity,"Calibration finished", Toast.LENGTH_LONG).show();
+                                    }
+                                });
                                 break;
                             }
 //                            mainActivity.sendData(toSend.take());
@@ -105,6 +119,7 @@ public class DeviceCheckTask extends AsyncTask<Void,Void,Void> {
                         e.printStackTrace();
                     }
                 }
+
             }
 //            try {
 //              //  if(!toSend.peek().equals("config high"))

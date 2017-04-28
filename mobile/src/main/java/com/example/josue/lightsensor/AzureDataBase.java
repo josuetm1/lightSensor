@@ -204,7 +204,8 @@ public class AzureDataBase {
                 stmt = c.createStatement();
                 rs = stmt.executeQuery("SELECT * FROM MALETA WHERE IDUSUARIO ='" + userID + "'");
                 while (rs.next()) {
-                    Device device = new Device(rs.getString(1), "fromDB", false);
+                    Device device = new Device(rs.getString(1), rs.getString("NAME"),rs.getString("MARCA"),
+                            rs.getString("COLOR"),rs.getString("TAMANO"));
                     if(!DeviceList.getInstance().contains(device)){
                         DeviceList.getInstance().add(device);
                     }
@@ -239,7 +240,7 @@ public class AzureDataBase {
         }
 
     }
-    public void addDevice(String deviceName) {
+    public void addDevice(Device device) {
 
         Connection c = CONN();
         Statement stmt;
@@ -247,10 +248,12 @@ public class AzureDataBase {
 
         if (c != null) {
             try {
+
                 stmt = c.createStatement();
-                stmt.executeUpdate("INSERT INTO MALETA (IDMALETA,IDUSUARIO) VALUES('"+deviceName+"','"+userID+"')");
-                Device device = new Device(deviceName, "fromUser", false);
-                if(!DeviceList.getInstance().contains(device)){
+                if(!DeviceList.getInstance().contains(device)) {
+                    stmt.executeUpdate("INSERT INTO MALETA (IDMALETA, IDUSUARIO, NAME, MARCA, TAMANO, COLOR) " +
+                            "VALUES ('"+device.getName()+"','"+userID+"','"+device.getNameUser()+"','"
+                            +device.getBrand()+"','"+device.getSize()+"','"+device.getColor()+"')");
                     DeviceList.getInstance().add(device);
                 }
                 c.close();

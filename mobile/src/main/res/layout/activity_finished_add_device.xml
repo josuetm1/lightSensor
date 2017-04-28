@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_finished_add_device"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.example.josue.lightsensor.FinishedAddDeviceActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="You just have added this device to your personal list. For the open alarm, the device uses a sensor that requieres to calibrate.  To calibrate the divice just press the button below and wait for the app to tell you what to do.\n\nAfter calibrating your device you should enable the alarm on the device menu long pressing the device on the list.\n\nAlso if you need to recalibrate in the device menu you can find the option to calibrate and other options we happily provide you."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView6"
+            android:textAppearance="@android:style/TextAppearance.Material.Widget.PopupMenu.Large" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom">
+
+            <Button
+                android:text="Start Calibration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonStartCalibration"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

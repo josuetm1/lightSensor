@@ -62,10 +62,18 @@
 
         <activity
             android:name=".AddDeviceActivity"
-            android:label="Add Device Step 1"/>
+            android:label="Add Device Step 1" />
         <activity
             android:name=".AddDeviceSecondActivity"
-            android:label="Add Device Step 2"/>
+            android:label="Add Device Step 2" />
+        <activity
+            android:name=".FinishedAddDeviceActivity"
+            android:label="Congratulations"
+            />
+        <activity
+            android:name=".SigninActivity"
+            android:label="Sing In"
+            />
     </application>
 
 </manifest>

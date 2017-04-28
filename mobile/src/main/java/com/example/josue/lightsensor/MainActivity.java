@@ -170,25 +170,28 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Long clicked","pos:"+String.valueOf(position));
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Options")
-                        .setItems(new String[]{"Check Last Seen","Delete",enableOrDisableAlarm+" Alarm","Set Thresholds"}, new DialogInterface.OnClickListener() {
+                        .setItems(new String[]{"Details","Refresh Last Seen","Delete",enableOrDisableAlarm+" Alarm","Calibrate"}, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                              //   Toast.makeText(MainActivity.this,"Selectec #:"+ String.valueOf(which),Toast.LENGTH_LONG).show();
                                 switch (which){
                                     case 0:
-                                        devicesAdapter.notifyDataSetChanged();
+                                        showDetailsDialogOf(position);
                                         break;
                                     case 1:
-                                        AzureDataBase.getInstace().deleteDevice(position);
                                         devicesAdapter.notifyDataSetChanged();
                                         break;
                                     case 2:
+                                        AzureDataBase.getInstace().deleteDevice(position);
+                                        devicesAdapter.notifyDataSetChanged();
+                                        break;
+                                    case 3:
                                         try {
                                             deviceCheckTask.toSend.put(enableOrDisableAlarm.toLowerCase());
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
                                         break;
-                                    case 3:
+                                    case 4:
                                         try {
                                             deviceCheckTask.toSend.put("config high");
                                         } catch (InterruptedException e) {
@@ -275,8 +278,38 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void showDetailsDialogOf(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+// Add the buttons
+        Device device = DeviceList.getInstance().get(position);
+        builder.setTitle("Details of "+device.getNameUser()+" Bag");
+
+
+        builder.setMessage( "Brand: "+device.getBrand()+"\n"+
+                            "Color: "+device.getColor()+"\n"+
+                            "Size: "+device.getSize()+"\n"+
+                            "MAC: "+device.getName()+"\n");
+
+        builder.setPositiveButton("OK", null);
+
+// Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        builder.show();
+
+    }
+
     protected void onRestart(){
         super.onRestart();
+        if(DeviceList.getInstance().newDeviceAddedPosition != null){
+            Log.d("Main Activity","New device not null");
+            DeviceList.getInstance().get(DeviceList.getInstance().newDeviceAddedPosition).setEnable(true);
+            DeviceList.getInstance().newDeviceAddedPosition = null;
+            try {
+                deviceCheckTask.toSend.put("config high");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         devicesAdapter.notifyDataSetChanged();
     }
 

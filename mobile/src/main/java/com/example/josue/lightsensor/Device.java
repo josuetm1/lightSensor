@@ -32,6 +32,16 @@ public class Device implements Parcelable{
 
     }
 
+    public Device(String name, String nameUser, String brand, String color, String size) {
+        this.name = name;
+        this.nameUser = nameUser;
+        this.brand = brand;
+        this.color = color;
+        this.size = size;
+
+
+    }
+
     public Device(String name, String state, boolean enable) {
         this.name = name;
         this.state = state;

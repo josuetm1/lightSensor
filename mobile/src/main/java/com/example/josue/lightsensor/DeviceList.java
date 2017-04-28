@@ -15,6 +15,8 @@ public class DeviceList extends ArrayList<Device> {
     private DeviceList() {
     }
 
+    Integer newDeviceAddedPosition = null;
+
     public boolean contains(Device d){
         for (Device device : ourInstance) {
             if(d.getName().equals(device.getName()))
@@ -23,5 +25,7 @@ public class DeviceList extends ArrayList<Device> {
         }
         return false;
     }
+
+
 
 }
