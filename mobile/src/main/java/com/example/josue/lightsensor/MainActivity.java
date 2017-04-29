@@ -140,19 +140,19 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.listViewDevices);
         listView.setLongClickable(true);
-        TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
+//        TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
 ////////make tabhost///////////
-        tabHost.setup();
-        TabHost.TabSpec tabSpecDevices = tabHost.newTabSpec("Devices");
-        tabSpecDevices.setIndicator("Devices");
-        tabSpecDevices.setContent(R.id.tabDevices);
-        tabHost.addTab(tabSpecDevices);
+//        tabHost.setup();
+//        TabHost.TabSpec tabSpecDevices = tabHost.newTabSpec("Devices");
+//        tabSpecDevices.setIndicator("Devices");
+//        tabSpecDevices.setContent(R.id.tabDevices);
+//        tabHost.addTab(tabSpecDevices);
 
-        tabHost.setup();
-        TabHost.TabSpec tabSpecDebug = tabHost.newTabSpec("Debug");
-        tabSpecDebug.setIndicator("Debug");
-        tabSpecDebug.setContent(R.id.tabDebug);
-        tabHost.addTab(tabSpecDebug);
+//        tabHost.setup();
+//        TabHost.TabSpec tabSpecDebug = tabHost.newTabSpec("Debug");
+//        tabSpecDebug.setIndicator("Debug");
+//        tabSpecDebug.setContent(R.id.tabDebug);
+//        tabHost.addTab(tabSpecDebug);
 
 
 
@@ -280,28 +280,28 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-       txtBtInput = (TextView) findViewById(R.id.textViewBluetoothInput);
-
-
-        txtInput = (EditText) findViewById(R.id.editTextInput);
-
-        button = (Button) findViewById(R.id.buttonSend);
-        button.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View view){
-                //txtHelloWorld.setText(txtInput.getText().toString());
-                findBT("B8:27:EB:6D:E5:A0");
-                try {
-                    openBT();
-                    sendData(txtInput.getText().toString());
-                    Log.d(txtInput.getText().toString(),"yes");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//       txtBtInput = (TextView) findViewById(R.id.textViewBluetoothInput);
+//
+//
+//        txtInput = (EditText) findViewById(R.id.editTextInput);
+//
+//        button = (Button) findViewById(R.id.buttonSend);
+//        button.setOnClickListener(new View.OnClickListener(){
+//            public void onClick(View view){
+//                //txtHelloWorld.setText(txtInput.getText().toString());
+//                findBT("B8:27:EB:6D:E5:A0");
+//                try {
+//                    openBT();
+//                    sendData(txtInput.getText().toString());
+//                    Log.d(txtInput.getText().toString(),"yes");
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
 
         Log.d("heloooooooooooooooo","yes");
-        txtBtInput.setText(AzureDataBase.getInstace().executeASDF("SELECT * FROM REGISTROMALETA"));
+//        txtBtInput.setText(AzureDataBase.getInstace().executeASDF("SELECT * FROM REGISTROMALETA"));
 
 
         //startService(new Intent(MainActivity.this, DeviceService.class));
