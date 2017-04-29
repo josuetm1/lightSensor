@@ -86,10 +86,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        for( Device device: DeviceList.getInstance()){
-            if(device.getLatLng() != null) {
-                add(device.getName(), device.getLatLng());
-            }
+        Intent intent = getIntent();
+        int option = intent.getIntExtra("option",0);
+        String deviceID = intent.getStringExtra("deviceID");
+        int days = intent.getIntExtra("days",0);
+
+        Toast.makeText(MapsActivity.this,"option: "+String.valueOf(option)+" days: "+
+                String.valueOf(days)+"deviceID: "+deviceID+"",Toast.LENGTH_LONG).show();
+
+        switch (option) {
+            case 0:
+                for (Device device : DeviceList.getInstance()) {
+                    if (device.getLatLng() != null) {
+                        add(device.getNameUser(), device.getLatLng());
+                    }
+                }
+            break;
+
+            case 1:
+//                for(MarkerOptions markerOptions : AzureDataBase.getInstace().getMarkerOptions(deviceID)){
+//                    add(markerOptions);
+//                }
+            break;
         }
 
         // Add a marker in Sydney and move the camera
@@ -101,9 +119,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        update("3", new LatLng(19.461011, -72.682417));
 //        remove("12D42342342");
 
-        if(DeviceList.getInstance().get(0).getLatLng() != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DeviceList.getInstance().get(0).getLatLng(), 10));
-        }
+//        if(DeviceList.getInstance().get(0).getLatLng() != null) {
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DeviceList.getInstance().get(0).getLatLng(), 10));
+//        }
         final MapsActivity act = this;
         GoogleMap.OnMarkerClickListener OnMarkerClickListener =new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -145,6 +163,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(title).snippet(snippet));
         markersHashMap.put(macAddress, marker);
     }
+    private void add(MarkerOptions markerOptions){
+        Marker marker = mMap.addMarker(markerOptions);
+        markersHashMap.put(markerOptions.getTitle(),marker);
+    }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
 }

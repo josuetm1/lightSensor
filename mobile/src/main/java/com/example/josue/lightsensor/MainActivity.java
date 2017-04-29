@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Long clicked","pos:"+String.valueOf(position));
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Options")
-                        .setItems(new String[]{"Details","Refresh Last Seen","Delete",enableOrDisableAlarm+" Alarm","Calibrate"}, new DialogInterface.OnClickListener() {
+                        .setItems(new String[]{"Details","Refresh Last Seen","Delete",enableOrDisableAlarm+" Alarm","Calibrate","Check history"}, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                              //   Toast.makeText(MainActivity.this,"Selectec #:"+ String.valueOf(which),Toast.LENGTH_LONG).show();
                                 switch (which){
@@ -197,6 +197,41 @@ public class MainActivity extends AppCompatActivity {
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
+                                        break;
+                                    case 5:
+
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                        builder.setTitle("How many days do you want to review?");
+
+// Set up the input
+                                        final EditText input = new EditText(MainActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                                        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                        builder.setView(input);
+
+// Set up the buttons
+                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Integer days = Integer.valueOf(input.getText().toString());
+                                                Intent intent = new Intent(MainActivity.this,MapsActivity.class);
+                                                intent.putExtra("option",1);
+                                                intent.putExtra("deviceID",DeviceList.getInstance().get(position).getName());
+                                                intent.putExtra("days",days);
+                                                startActivity(intent);
+
+                                            }
+                                        });
+                                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+
+                                        builder.show();
+
+
                                         break;
                                 }
                             }

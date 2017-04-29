@@ -6,9 +6,11 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.microsoft.sqlserver.jdbc.*;
 
 /**
@@ -246,8 +248,6 @@ public class AzureDataBase {
 
         Connection c = CONN();
         Statement stmt;
-
-
         if (c != null) {
             try {
 
@@ -264,6 +264,44 @@ public class AzureDataBase {
             }
         }
 
+    }
+
+    public ArrayList<MarkerOptions> getMarkerOptions(String idMaleta){
+        ArrayList<MarkerOptions> list = null;
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+
+        if (c != null) {
+            try {
+                stmt = c.createStatement();
+                rs = stmt.executeQuery("SELECT IDAEROPUERTO,LATITUD,LONGITUD,ALARMA,FECHAF FROM REGISTROMALETA WHERE IDMALETA = '"+idMaleta+"'");
+                while (rs.next()) {
+                    String aeropuerto = rs.getString("IDAEROPUERTO");
+                    Double latitud = Double.valueOf(rs.getString("LATITUD"));
+                    Double longitud = Double.valueOf(rs.getString("LONGITUD"));
+                    String alarma = alarmToString(rs.getBoolean("ALARMA"));
+                    Timestamp fecha = rs.getTimestamp("FECHAF");
+
+                    list.add(new MarkerOptions().position(new LatLng(latitud,longitud))
+                            .title(new SimpleDateFormat("yyyy/MM/dd 'at' h:mm a").format(fecha))
+                            .snippet(alarma));
+
+                }
+
+
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
+
+    private String alarmToString(boolean alarma) {
+        if(alarma)
+            return "Alarm was activated";
+        return "Alarm not activated";
     }
 
     public void getDeviceStatus(int i) {
