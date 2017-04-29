@@ -15,6 +15,7 @@ public class DeviceList extends ArrayList<Device> {
     private DeviceList() {
     }
 
+    Integer newUser = null;
     Integer newDeviceAddedPosition = null;
 
     public boolean contains(Device d){

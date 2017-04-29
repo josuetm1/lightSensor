@@ -98,6 +98,8 @@ public class AzureDataBase {
                         "'" +password+"', " +
                         "'" +email+"'"
                         +")";
+
+                DeviceList.getInstance().newUser = 1;
                 Log.d("Debug",sql);
                 stmt.executeUpdate(sql);
 

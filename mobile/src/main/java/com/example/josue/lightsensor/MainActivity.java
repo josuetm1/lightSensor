@@ -275,6 +275,25 @@ public class MainActivity extends AppCompatActivity {
         deviceCheckTask.execute();
 
      //   launchNotification();
+        if(DeviceList.getInstance().newUser != null){
+            if(DeviceList.getInstance().newUser == 2){
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+// Add the buttons
+                builder.setTitle("Welcome");
+
+
+                builder.setMessage("Thank you for choosing travel security. " +
+                        "In this page you can manage your devices. Add a device clicking in the pink button. " +
+                        "There is more options in the top right corner, check them out.");
+
+                builder.setPositiveButton("OK", null);
+
+// Create the AlertDialog
+                AlertDialog dialog = builder.create();
+                builder.show();
+                DeviceList.getInstance().newUser = null;
+            }
+        }
 
     }
 

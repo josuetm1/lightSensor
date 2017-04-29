@@ -129,34 +129,34 @@ public class SigninActivity extends AppCompatActivity implements LoaderCallbacks
 
         // Check for a valid password, if the user entered one.
         if (!isPasswordValid(password)) {
-            mPasswordView.setError("La contraseña debe de tener por lo menos 4 caracteres");
+            mPasswordView.setError("Password must have at least 4 characters");
             focusView = mPasswordView;
             cancel = true;
         }
         if(!password.equals(password2)){
-            mPassword2View.setError("Ambas contraseña deben de ser iguales");
+            mPassword2View.setError("Passwords do not match");
             focusView = mPassword2View;
             cancel = true;
         }
 
         if (TextUtils.isEmpty(nombres)) {
-            mNombresView.setError("El nombre no puede estar vacío");
+            mNombresView.setError("Name cant be empty");
             focusView = mNombresView;
             cancel = true;
         }
         if (TextUtils.isEmpty(apellidos)) {
-            mApellidosView.setError("El apellido no puede estar vacío");
+            mApellidosView.setError("Last name cant be empty");
             focusView = mApellidosView;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError("El correo electrónico no puede estar vacío");
+            mEmailView.setError("Email cant be empty");
             focusView = mEmailView;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError("Correo inválido");
+            mEmailView.setError("Invalid email");
             focusView = mEmailView;
             cancel = true;
         }
@@ -307,7 +307,7 @@ public class SigninActivity extends AppCompatActivity implements LoaderCallbacks
             if (success) {
                 finish();
             } else {
-                mEmailView.setError("Este correo ya possee una cuenta con nosotros. Utiliza otro correo");
+                mEmailView.setError("This email is already registered");
                 mEmailView.requestFocus();
             }
         }

@@ -33,6 +33,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserLoginTask mAuthTask = null;
 
     // UI references.
+    private Button buttonSignIn;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -96,6 +98,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 attemptLogin();
             }
         });
+        buttonSignIn = (Button) findViewById(R.id.buttonSignIn);
+        buttonSignIn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this,SigninActivity.class));
+
+            }
+        });
+
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -132,6 +143,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
         }
         return false;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if(DeviceList.getInstance().newUser != null){
+            if(DeviceList.getInstance().newUser == 1){
+                Toast.makeText(LoginActivity.this,"User created, now Log In", Toast.LENGTH_LONG).show();
+                DeviceList.getInstance().newUser = 2;
+            }
+        }
     }
 
     /**
