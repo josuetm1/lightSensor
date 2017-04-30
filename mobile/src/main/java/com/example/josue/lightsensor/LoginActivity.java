@@ -54,9 +54,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    private static final String[] DUMMY_CREDENTIALS = AzureDataBase.getInstace().getUsersAndPasswords();
+    private static String[] DUMMY_CREDENTIALS = AzureDataBase.getInstace().getUsersAndPasswords();
 
-//    private static final String[] DUMMY_CREDENTIALS = new String[]{
+    public static String[] getDummyCredentials() {
+        return DUMMY_CREDENTIALS;
+    }
+
+    public static void setDummyCredentials(String[] dummyCredentials) {
+        DUMMY_CREDENTIALS = dummyCredentials;
+    }
+    //    private static final String[] DUMMY_CREDENTIALS = new String[]{
 //            "foo@example.com:hello", "bar@example.com:world"
 //    };
     /**
@@ -148,6 +155,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onRestart() {
         super.onRestart();
+        setDummyCredentials(AzureDataBase.getInstace().getUsersAndPasswords());
         if(DeviceList.getInstance().newUser != null){
             if(DeviceList.getInstance().newUser == 1){
                 Toast.makeText(LoginActivity.this,"User created, now Log In", Toast.LENGTH_LONG).show();
@@ -347,7 +355,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //                return false;
 //            }
 
-            for (String credential : DUMMY_CREDENTIALS) {
+            for (String credential : getDummyCredentials()) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     AzureDataBase.getInstace().setUserID(mEmail);

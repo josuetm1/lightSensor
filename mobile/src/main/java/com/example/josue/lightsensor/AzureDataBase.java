@@ -246,7 +246,7 @@ public class AzureDataBase {
         }
 
     }
-    public void addDevice(Device device) {
+    public boolean addDevice(Device device) {
 
         Connection c = CONN();
         Statement stmt;
@@ -259,13 +259,15 @@ public class AzureDataBase {
                             "VALUES ('"+device.getName()+"','"+userID+"','"+device.getNameUser()+"','"
                             +device.getBrand()+"','"+device.getSize()+"','"+device.getColor()+"')");
                     DeviceList.getInstance().add(device);
+                    DeviceList.getInstance().newDeviceAddedPosition = DeviceList.getInstance().indexOf(device);
                 }
                 c.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                return false;
             }
         }
-
+        return true;
     }
 
     public ArrayList<MarkerOptions> getMarkerOptions(String idMaleta,String days){

@@ -408,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("Alarm")
-                        .setContentText("The device "+DeviceList.getInstance().get(0).getName()+" opened");
+                        .setContentText("The bag "+DeviceList.getInstance().get(0).getNameUser()+" was opened, check the history opens for details.");
 // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, LoginActivity.class);
 

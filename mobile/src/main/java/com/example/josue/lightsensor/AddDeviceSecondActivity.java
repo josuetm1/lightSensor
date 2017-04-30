@@ -44,10 +44,15 @@ public class AddDeviceSecondActivity extends AppCompatActivity {
                     if(Pattern.matches("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",editTextMACAddress.getText().toString())){
                         device.setName(editTextMACAddress.getText().toString());
                         if(!DeviceList.getInstance().contains(device)) {
-                            AzureDataBase.getInstace().addDevice(device);
-                            DeviceList.getInstance().newDeviceAddedPosition = DeviceList.getInstance().indexOf(device);
-                            startActivity(new Intent(AddDeviceSecondActivity.this, FinishedAddDeviceActivity.class));
-                            finish();
+                            if(AzureDataBase.getInstace().addDevice(device)) {
+                                startActivity(new Intent(AddDeviceSecondActivity.this, FinishedAddDeviceActivity.class));
+                                finish();
+                            }else{
+                                Toast.makeText(AddDeviceSecondActivity.this,
+                                        "Another user has this device",
+                                        Toast.LENGTH_LONG).show();
+                                finish();
+                            }
                         }else {
                             Toast.makeText(AddDeviceSecondActivity.this,
                                     "This device already exist",

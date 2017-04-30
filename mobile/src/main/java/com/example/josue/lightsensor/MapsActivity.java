@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -91,14 +92,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         String deviceID = intent.getStringExtra("deviceID");
         int days = intent.getIntExtra("days",0);
 
-        Toast.makeText(MapsActivity.this,"option: "+String.valueOf(option)+" days: "+
-                String.valueOf(days)+"deviceID: "+deviceID+"",Toast.LENGTH_LONG).show();
+//        Toast.makeText(MapsActivity.this,"option: "+String.valueOf(option)+" days: "+
+//                String.valueOf(days)+"deviceID: "+deviceID+"",Toast.LENGTH_LONG).show();
 
         switch (option) {
             case 0:
                 for (Device device : DeviceList.getInstance()) {
                     if (device.getLatLng() != null) {
-                        add(device.getNameUser(), device.getLatLng());
+                        add(device);
                     }
                 }
             break;
@@ -122,22 +123,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        if(DeviceList.getInstance().get(0).getLatLng() != null) {
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DeviceList.getInstance().get(0).getLatLng(), 10));
 //        }
-        final MapsActivity act = this;
-        GoogleMap.OnMarkerClickListener OnMarkerClickListener =new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(final Marker marker) {
-                Toast.makeText(act,
-                        "Esto mostrará más info del dispositivo.\n"+
-                        "Línea2\n" +
-                                "Línea3",
-                        Toast.LENGTH_SHORT).show();
-                // Return false to indicate that we have not consumed the event and that we wish
-                // for the default behavior to occur (which is for the camera to move such that the
-                // marker is centered and for the marker's info window to open, if it has one).
-                return false;
-            }
-        };
-        mMap.setOnMarkerClickListener(OnMarkerClickListener);
+//        final MapsActivity act = this;
+//        GoogleMap.OnMarkerClickListener OnMarkerClickListener =new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(final Marker marker) {
+//                Toast.makeText(act,
+//                        "Esto mostrará más info del dispositivo.\n"+
+//                        "Línea2\n" +
+//                                "Línea3",
+//                        Toast.LENGTH_SHORT).show();
+//                // Return false to indicate that we have not consumed the event and that we wish
+//                // for the default behavior to occur (which is for the camera to move such that the
+//                // marker is centered and for the marker's info window to open, if it has one).
+//                return false;
+//            }
+//        };
+//        mMap.setOnMarkerClickListener(OnMarkerClickListener);
     }
 
     private void remove(String macAddress){
@@ -153,15 +154,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         marker.setPosition(latLng);
     }
 
-    private void add(String macAddress, LatLng latLng){
-        if (markersHashMap.containsKey(macAddress)){
+    private void add(Device device){
+        if (markersHashMap.containsKey(device.getNameUser())){
 
             return;
         }
-        String title = macAddress;
-        String snippet = "Line1 Line2";
-        Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(title).snippet(snippet));
-        markersHashMap.put(macAddress, marker);
+        String title = device.getNameUser();
+        String snippet = new SimpleDateFormat("yyyy/MM/dd 'at' h:mm a 'UTC'").format(device.getLastSeen());
+        Marker marker = mMap.addMarker(new MarkerOptions().position(device.getLatLng()).title(title).snippet(snippet));
+        markersHashMap.put(device.getNameUser(), marker);
     }
     private void add(MarkerOptions markerOptions){
         Marker marker = mMap.addMarker(markerOptions);
