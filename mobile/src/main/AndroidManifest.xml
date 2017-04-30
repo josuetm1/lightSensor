@@ -43,7 +43,7 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:label="Map" />
         <activity
             android:name=".LoginActivity"
             android:label="Travel Security">

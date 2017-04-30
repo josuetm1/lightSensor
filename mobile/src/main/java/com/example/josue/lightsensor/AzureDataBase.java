@@ -8,6 +8,7 @@ import android.util.Log;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -235,6 +236,7 @@ public class AzureDataBase {
             try {
                 stmt = c.createStatement();
                 stmt.executeUpdate("DELETE FROM REGISTROMALETA WHERE IDMALETA ='" + DeviceList.getInstance().get(position).getName() + "'");
+                stmt.executeUpdate("DELETE FROM HISTORIALAPERTURA WHERE IDMALETA ='" + DeviceList.getInstance().get(position).getName() + "'");
                 stmt.executeUpdate("DELETE FROM MALETA WHERE IDMALETA ='" + DeviceList.getInstance().get(position).getName() + "'");
                 DeviceList.getInstance().remove(position);
                 c.close();
@@ -266,8 +268,8 @@ public class AzureDataBase {
 
     }
 
-    public ArrayList<MarkerOptions> getMarkerOptions(String idMaleta){
-        ArrayList<MarkerOptions> list = null;
+    public ArrayList<MarkerOptions> getMarkerOptions(String idMaleta,String days){
+        ArrayList<MarkerOptions> list = new ArrayList<>();
         Connection c = CONN();
         Statement stmt;
         ResultSet rs;
@@ -275,16 +277,23 @@ public class AzureDataBase {
         if (c != null) {
             try {
                 stmt = c.createStatement();
-                rs = stmt.executeQuery("SELECT IDAEROPUERTO,LATITUD,LONGITUD,ALARMA,FECHAF FROM REGISTROMALETA WHERE IDMALETA = '"+idMaleta+"'");
+                rs = stmt.executeQuery("SELECT * FROM REGISTROMALETA WHERE IDMALETA ='"+idMaleta+"' AND FECHA BETWEEN GETDATE() - "+days+" AND GETDATE()");
                 while (rs.next()) {
                     String aeropuerto = rs.getString("IDAEROPUERTO");
                     Double latitud = Double.valueOf(rs.getString("LATITUD"));
                     Double longitud = Double.valueOf(rs.getString("LONGITUD"));
                     String alarma = alarmToString(rs.getBoolean("ALARMA"));
-                    Timestamp fecha = rs.getTimestamp("FECHAF");
+                    Timestamp fecha = rs.getTimestamp("FECHA");
+
+
+                    SimpleDateFormat toDisplay = new SimpleDateFormat("yyyy/MM/dd 'at' h:mm a 'UTC'");
+                    //toDisplay.setTimeZone(TimeZone.getDefault());
+                    Log.d("time",fecha.toString()+"->"+toDisplay.format(fecha)+" "+TimeZone.getDefault().toString());
+
+
 
                     list.add(new MarkerOptions().position(new LatLng(latitud,longitud))
-                            .title(new SimpleDateFormat("yyyy/MM/dd 'at' h:mm a").format(fecha))
+                            .title(toDisplay.format(fecha))
                             .snippet(alarma));
 
                 }
@@ -336,5 +345,57 @@ public class AzureDataBase {
         }
 
 
+    }
+
+    public void addAperturas(ArrayList<Apertura> listAperturas) {
+        Connection c = CONN();
+        Statement stmt;
+        if (c != null) {
+            try {
+
+                stmt = c.createStatement();
+                for(Apertura apertura : listAperturas) {
+                    Log.d("insert apertura", "fecha " + apertura.getFecha().toString());
+
+                    stmt.executeUpdate("INSERT INTO HISTORIALAPERTURA (IDMALETA, FECHA, LATITUD, LONGITUD) " +
+                            "VALUES ('" + apertura.getDevice().getName() + "','" + apertura.getFecha().toString() + "','" +
+                            String.valueOf(apertura.getLatLng().latitude) + "','"
+                            + String.valueOf(apertura.getLatLng().longitude) + "')");
+                }
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public String[] getAperturas(Integer position, Integer days) {
+
+        Connection c = CONN();
+        Statement stmt;
+        ResultSet rs;
+        Device device = DeviceList.getInstance().get(position);
+        ArrayList<String> aux = new ArrayList<String>();
+
+
+        if (c != null) {
+            try {
+                stmt = c.createStatement();
+                rs = stmt.executeQuery("SELECT * FROM HISTORIALAPERTURA WHERE IDMALETA =" +
+                        "'"+device.getName()+"' AND FECHA BETWEEN GETDATE() - "+days+" AND GETDATE()");
+                while (rs.next()) {
+                    aux.add(new SimpleDateFormat("yyyy/MM/dd 'at' h:mm a 'UTC'").format(rs.getTimestamp("FECHA")));
+
+                }
+
+                c.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        String[] stockArr = new String[aux.size()];
+        stockArr = aux.toArray(stockArr);
+        return stockArr;
     }
 }

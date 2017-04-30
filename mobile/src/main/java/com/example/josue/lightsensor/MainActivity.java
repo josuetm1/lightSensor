@@ -170,7 +170,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Long clicked","pos:"+String.valueOf(position));
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Options")
-                        .setItems(new String[]{"Details","Refresh Last Seen","Delete",enableOrDisableAlarm+" Alarm","Calibrate","Check history"}, new DialogInterface.OnClickListener() {
+                        .setItems(new String[]{"Details","Refresh Last Seen","Delete",enableOrDisableAlarm+" Alarm",
+                                "Calibrate","Airports history", "Open history"}, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                              //   Toast.makeText(MainActivity.this,"Selectec #:"+ String.valueOf(which),Toast.LENGTH_LONG).show();
                                 switch (which){
@@ -230,6 +231,41 @@ public class MainActivity extends AppCompatActivity {
                                         });
 
                                         builder.show();
+
+
+                                        break;
+                                    case 6:
+
+                                        final AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                                        builder1.setTitle("How many days do you want to review?");
+
+// Set up the input
+                                        final EditText input1 = new EditText(MainActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                                        input1.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                        builder1.setView(input1);
+
+// Set up the buttons
+                                        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Integer days = Integer.valueOf(input1.getText().toString());
+                                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+                                                builder.setTitle("Alarm Activated Dates")
+                                                        .setItems(AzureDataBase.getInstace().getAperturas(position,days),null);
+                                                builder.show();
+
+
+                                            }
+                                        });
+                                        builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+
+                                        builder1.show();
 
 
                                         break;
@@ -586,11 +622,11 @@ public class MainActivity extends AppCompatActivity {
     void launchDialog (final String toSend){
         String place = "in";
         if(toSend.equals("set out"))
-            place = "out of the luggage";
+            place = "inside of the luggage wide open";
         else if (toSend.equals("set closed"))
             place = "inside of the luggage closed";
         else if (toSend.equals("set open"))
-            place = "inside of the luggage opened";
+            place = "inside of the luggage little open";
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 // Add the buttons
@@ -601,8 +637,22 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+//                try {
+//                    Log.d("In Dialog OK", toSend);
+//                    deviceCheckTask.toSend.put(toSend);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        });
+
+// Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
                 try {
-                    Log.d("In Dialog OK", toSend);
+                    Log.d("In Dialog dissmis", toSend);
                     deviceCheckTask.toSend.put(toSend);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -610,8 +660,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-// Create the AlertDialog
-        AlertDialog dialog = builder.create();
         builder.show();
     }
 

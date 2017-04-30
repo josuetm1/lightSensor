@@ -104,9 +104,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             break;
 
             case 1:
-//                for(MarkerOptions markerOptions : AzureDataBase.getInstace().getMarkerOptions(deviceID)){
-//                    add(markerOptions);
-//                }
+                for(MarkerOptions markerOptions : AzureDataBase.getInstace().getMarkerOptions(deviceID,String.valueOf(days))){
+                    add(markerOptions);
+                }
             break;
         }
 

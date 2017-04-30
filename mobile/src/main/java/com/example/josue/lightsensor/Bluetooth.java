@@ -12,6 +12,7 @@ import android.os.SystemClock;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
@@ -189,14 +191,26 @@ public class Bluetooth {
              //   sendData("yes");
                 closeBT();
                 mainActivity.enableOrDisableAlarm = "Disable";
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mainActivity,"Alarm in device enabled",Toast.LENGTH_LONG).show();
+                    }
+                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else  if(data.equals("disabled")){
+        } else if(data.equals("disabled")){
             try {
               //  sendData("yes");
                 closeBT();
                 mainActivity.enableOrDisableAlarm = "Enable";
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mainActivity,"Alarm in device disabled",Toast.LENGTH_LONG).show();
+                    }
+                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -239,6 +253,16 @@ public class Bluetooth {
             if (Boolean.valueOf(aux[1])) {
                 mainActivity.launchNotification();
                 try {
+
+                    ArrayList<Apertura> listAperturas = new ArrayList<>();
+
+                    String[] aperturasStrings = aux[4].split("///");
+
+                    for(String aperturaString : aperturasStrings){
+                        listAperturas.add(new Apertura(aperturaString, DeviceList.getInstance().get(0)));
+                    }
+
+                    AzureDataBase.getInstace().addAperturas(listAperturas);
                     sendData("alarm ack");
                 } catch (IOException e) {
                     e.printStackTrace();
