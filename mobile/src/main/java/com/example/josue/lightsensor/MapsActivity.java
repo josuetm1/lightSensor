@@ -46,15 +46,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //noinspection SimplifiableIfStatement
         switch (id){
             case R.id.action_add:
+                Toast.makeText(this,"Log out must be done from List of Devices",Toast.LENGTH_LONG).show();
+                finish();
+                break;
+            case R.id.action_map:
+//                intent = new Intent(this, MapsActivity.class);
+//                startActivity(intent);
+                break;
+            case R.id.action_list:
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
-                return true;
-            case R.id.action_map:
-                intent = new Intent(this, MapsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_list:
-                return true;
+                break;
             default:
                 break;
         }

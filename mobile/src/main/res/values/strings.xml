@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">lightSensor</string>
-    <string name="action_map">Mapa</string>
-    <string name="action_add">Agregar</string>
-    <string name="action_list">Listado</string>
+    <string name="action_map">List On Map</string>
+    <string name="action_add">Log out</string>
+    <string name="action_list">List of devices</string>
     <string name="title_activity_maps">Ubicación de dispositivos</string>
     <string name="title_activity_login">Sign in</string>
 

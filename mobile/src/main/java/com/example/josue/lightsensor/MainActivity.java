@@ -764,14 +764,17 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (id){
             case R.id.action_add:
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.action_map:
                 intent = new Intent(this, MapsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.action_list:
+//                intent = new Intent(this, MainActivity.class);
+//                startActivity(intent);
                 break;
             default:
                 break;
